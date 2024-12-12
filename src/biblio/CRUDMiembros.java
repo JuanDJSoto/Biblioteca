@@ -44,7 +44,7 @@ DefaultTableModel model;
         int dia = hoy.getDayOfMonth();
         int mes = hoy.getMonthValue();
         int anio = hoy.getYear();
-        fecha= dia+"-"+mes+"-"+anio;
+        fecha= dia+"/"+mes+"/"+anio;
         //lblfecha.setText(fecha);
     }
     

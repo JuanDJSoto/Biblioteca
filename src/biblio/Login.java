@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 public class Login extends javax.swing.JFrame {
     public static Connection Conn;
     public static String rang="";
+    public static String nom="";
     Statement sent;
 public static String users="0";
 
@@ -32,6 +33,8 @@ public static String users="0";
         opa.setOpaque(true);
         opa.setBackground(new Color(74,74,82, 200));
         setLocationRelativeTo(null);
+        jLabel5.setVisible(false);
+        jLabel6.setVisible(false);
     }
     void Limpiar(){
         txtusuario.setText("");
@@ -176,6 +179,7 @@ public static String users="0";
     private void btnaccederActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnaccederActionPerformed
         // TODO add your handling code here
         String usuario=txtusuario.getText();
+        nom=usuario;
         String pass=password.getText();
         String pass1="";
         String sql ="SELECT CONTRASENIA_USUARIO from USUARIO WHERE NOMBRE_USUARIO='"+usuario+"'";

@@ -5,11 +5,14 @@
 package biblio;
 
 import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.mysql.jdbc.PreparedStatement;
 import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,30 +22,33 @@ import javax.swing.JOptionPane;
 public class Prestamos extends javax.swing.JFrame {
 private DatePicker datePickerSalida;
     private DatePicker datePickerEntrega;
+    DatePickerSettings settings = new DatePickerSettings();
     Connection conn;
     String ide="";
+    String fecha="";
 Statement sent;
     /**
      * Creates new form PrePrestamos
      */
     public Prestamos() {
+        
+        settings.setFormatForDatesCommonEra("dd/MM/yyyy"); // Cambiar formato de fecha
         initComponents();
         setLocationRelativeTo(null);
-        ope.setOpaque(true);
-        ope.setBackground(new Color(74,74,82, 200));
-        ope.setOpaque(true);
-        ope.setBackground(new Color(74,74,82, 200));
-        // Inicializar DatePicker de Fecha de Salida
-    datePickerSalida = new DatePicker();
-    panelFechaSalida.add(datePickerSalida);
-    panelFechaSalida.revalidate();
-    panelFechaSalida.repaint();
-
-    // Inicializar DatePicker de Fecha de Entrega
-    datePickerEntrega = new DatePicker();
-    panelFechaEntrega.add(datePickerEntrega);
-    panelFechaEntrega.revalidate();
-    panelFechaEntrega.repaint();
+        fecha();
+        opa.setOpaque(true);
+        opa.setBackground(new Color(74,74,82, 200));
+        opa.setOpaque(true);
+        opa.setBackground(new Color(74,74,82, 200));
+        
+    }
+    void fecha(){
+        LocalDateTime hoy = LocalDateTime.now();
+        int dia = hoy.getDayOfMonth();
+        int mes = hoy.getMonthValue();
+        int anio = hoy.getYear();
+        fecha= dia+"/"+mes+"/"+anio;
+        lblfecha.setText(fecha);
     }
     void Limpiar(){
         txtIDLibro.setText("");
@@ -57,9 +63,9 @@ void Nueva(){
                     +"values("
                     +"'"+txtIDLibro.getText()+"',"
                     +"'"+txtIDMiembro.getText()+"',"
-                    +"'FECHA PRESTAMO',"
-                    +"'FECHA DEVOLUCION',"
-                    +"'En proceso')";
+                    +"'"+fecha+"',"
+                    +"'"+datePicker1.getText()+"',"
+                    +"'Prestado')";
             sent = conn.createStatement();
             int n = sent.executeUpdate(sql);
             if(n>0){
@@ -70,6 +76,7 @@ void Nueva(){
         }catch (Exception e){
             JOptionPane.showMessageDialog(null,e.getMessage());
         }
+        reset();
         iden();
 }
 
@@ -116,6 +123,22 @@ void N_H(){
         }
         Limpiar();
 }
+void reset(){
+    String sql = "UPDATE Libros SET ESTADO_LIBRO= 'En prestamo' WHERE ID_LIBRO='"+txtIDLibro.getText()+"'";
+    try{
+            conn = DB.Mysql.getConnection();
+            sent = conn.createStatement();
+            int n = sent.executeUpdate(sql);
+            if(n>0){
+                //JOptionPane.showMessageDialog(null,"Datos guardados");
+            }else{
+                JOptionPane.showMessageDialog(null,"No se pudieron guardar los datos");
+            }
+            
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null,e.getMessage());
+        }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -132,19 +155,20 @@ void N_H(){
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         lblIDMiembro = new javax.swing.JLabel();
-        panelFechaSalida = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         lblNombreMiembro = new javax.swing.JLabel();
-        panelFechaEntrega = new javax.swing.JPanel();
         lblMiembro = new javax.swing.JLabel();
-        lblLibro = new javax.swing.JLabel();
+        lblfecha = new javax.swing.JLabel();
         btnnuevo = new javax.swing.JButton();
         lblbuscar = new javax.swing.JLabel();
         lblbuscar1 = new javax.swing.JLabel();
         btnsalir = new javax.swing.JButton();
         txtIDLibro = new javax.swing.JTextField();
         txtIDMiembro = new javax.swing.JTextField();
-        ope = new javax.swing.JLabel();
+        lblLibro = new javax.swing.JLabel();
+        datePicker1 =  new DatePicker(settings)
+        ;
+        opa = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -183,23 +207,6 @@ void N_H(){
         lblIDMiembro.setText("ID del miembro:");
         jPanel1.add(lblIDMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, -1));
 
-        panelFechaSalida.setBackground(new java.awt.Color(0, 51, 255));
-        panelFechaSalida.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        panelFechaSalida.setName("panelFechaSalida"); // NOI18N
-
-        javax.swing.GroupLayout panelFechaSalidaLayout = new javax.swing.GroupLayout(panelFechaSalida);
-        panelFechaSalida.setLayout(panelFechaSalidaLayout);
-        panelFechaSalidaLayout.setHorizontalGroup(
-            panelFechaSalidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 86, Short.MAX_VALUE)
-        );
-        panelFechaSalidaLayout.setVerticalGroup(
-            panelFechaSalidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 24, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(panelFechaSalida, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 210, 90, -1));
-
         jLabel4.setBackground(new java.awt.Color(255, 255, 255));
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
@@ -212,32 +219,15 @@ void N_H(){
         lblNombreMiembro.setText("Nombre del miembro:");
         jPanel1.add(lblNombreMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 50, -1, -1));
 
-        panelFechaEntrega.setBackground(new java.awt.Color(0, 51, 255));
-        panelFechaEntrega.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        panelFechaEntrega.setName("panelFechaEntrega"); // NOI18N
-
-        javax.swing.GroupLayout panelFechaEntregaLayout = new javax.swing.GroupLayout(panelFechaEntrega);
-        panelFechaEntrega.setLayout(panelFechaEntregaLayout);
-        panelFechaEntregaLayout.setHorizontalGroup(
-            panelFechaEntregaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 86, Short.MAX_VALUE)
-        );
-        panelFechaEntregaLayout.setVerticalGroup(
-            panelFechaEntregaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 24, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(panelFechaEntrega, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 260, 90, -1));
-
         lblMiembro.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         lblMiembro.setForeground(new java.awt.Color(255, 255, 255));
         lblMiembro.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(0, 0, 0), new java.awt.Color(102, 102, 102)));
         jPanel1.add(lblMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, 150, 22));
 
-        lblLibro.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        lblLibro.setForeground(new java.awt.Color(255, 255, 255));
-        lblLibro.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(0, 0, 0), new java.awt.Color(102, 102, 102)));
-        jPanel1.add(lblLibro, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 160, 150, 22));
+        lblfecha.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+        lblfecha.setForeground(new java.awt.Color(255, 255, 255));
+        lblfecha.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(0, 0, 0), new java.awt.Color(102, 102, 102)));
+        jPanel1.add(lblfecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 210, 150, 22));
 
         btnnuevo.setBackground(new java.awt.Color(0, 0, 0));
         btnnuevo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -298,7 +288,13 @@ void N_H(){
         txtIDMiembro.setSelectedTextColor(new java.awt.Color(255, 255, 255));
         txtIDMiembro.setSelectionColor(new java.awt.Color(255, 255, 255));
         jPanel1.add(txtIDMiembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 150, 22));
-        jPanel1.add(ope, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 420, 360));
+
+        lblLibro.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+        lblLibro.setForeground(new java.awt.Color(255, 255, 255));
+        lblLibro.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(0, 0, 0), new java.awt.Color(102, 102, 102)));
+        jPanel1.add(lblLibro, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 160, 150, 22));
+        jPanel1.add(datePicker1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 250, -1, -1));
+        jPanel1.add(opa, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 420, 360));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 420, 360));
 
@@ -418,6 +414,7 @@ void N_H(){
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnnuevo;
     private javax.swing.JButton btnsalir;
+    private com.github.lgooddatepicker.components.DatePicker datePicker1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -431,9 +428,8 @@ void N_H(){
     private javax.swing.JLabel lblNombreMiembro;
     private javax.swing.JLabel lblbuscar;
     private javax.swing.JLabel lblbuscar1;
-    private javax.swing.JLabel ope;
-    private javax.swing.JPanel panelFechaEntrega;
-    private javax.swing.JPanel panelFechaSalida;
+    private javax.swing.JLabel lblfecha;
+    private javax.swing.JLabel opa;
     private javax.swing.JTextField txtIDLibro;
     private javax.swing.JTextField txtIDMiembro;
     // End of variables declaration//GEN-END:variables
